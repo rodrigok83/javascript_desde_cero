@@ -44,4 +44,4 @@ function calcular(a, b, calc) {
     calc(a, b)
 }
 
-calcular(1, 2, alertarSamy)
+calcular(1, 2, alertarSamy);
