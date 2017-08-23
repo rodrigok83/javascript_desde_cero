@@ -1,0 +1,183 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Mostrar Formularios</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script>
+        function loguearCampos() {
+            event.preventDefault();
+            var nombre = $("input[id=nombre]").val();
+            console.log("nombre", nombre);
+            var apellido = $("input[id=apellido]").val();
+            console.log("apellido", apellido);
+            var dni = $("input[id=dni]").val();
+            console.log("dni", dni);
+            var direccion = $("input[id=direccion]").val();
+            console.log("direccion", direccion);
+            var fecha = $("input[id=fecha]").val();
+            console.log("fecha", fecha);
+
+            var sexo = $("select").val();
+            console.log("sexo", sexo);
+
+            var descripcion = $("textarea").val();
+            console.log("descripcion", descripcion);
+        }
+        function loguearObjetoCampos() {
+            event.preventDefault();
+            var persona = {
+                nombre: $("#nombre").val(),
+                apellido: $("input[id=apellido]").val(),
+                dni: $("input[id=dni]").val(),
+                direccion: $("input[id=direccion]").val(),
+                fecha: $("input[id=fecha]").val(),
+                sexo: $("select").val(),
+                descripcion: $("textarea").val()
+            };
+            console.log("Los datos de la persona son:", persona);
+        }
+        function loguearObjetoCampos2() {
+            event.preventDefault();
+            var persona = {
+                nombre: null,
+                apellido: null,
+                dni: null,
+                direccion: null,
+                fecha: null,
+                sexo: null,
+                descripcion: null
+            };
+
+            var atributos = Object.keys(persona);
+
+            for (i = 0; i < atributos.length; i++) {
+                var atributoActual = atributos[i];
+                var valorActual = $("#" + atributoActual).val();
+                persona[atributoActual] = valorActual;
+            }
+
+
+            enviarDatosAServidor(persona)
+        }
+
+        function enviarDatosAServidor(persona){
+            // https://requestb.in/z4451lz4
+              $.ajax({
+                    method: "POST",
+                    url: "https://requestb.in/z4451lz4",
+                    data: persona
+                    })
+                .then(function( msg ) {
+                    alert( "Data Saved: " + msg );
+                })
+                .catch(function( error ) {
+                    console.error( "ERR: ", error );
+                });
+            // console.log("Los datos de la persona son:", persona);
+            }
+
+        function traerDatosDelServidor(){
+             $.ajax({
+                    method: "GET",
+                    url: "leo.json",
+                })
+                .then(function( leo ) {
+                    cargarFormulario(leo)
+                    //METER LOS DATOS ENEEL FORM
+                })
+                .catch(function( error ) {
+                    limpiarCampos();
+                    console.error( "ERR: ", error );
+                });
+            // console.log("Los datos de la persona son:", persona);
+            }    
+        function cargarFormulario(datos) {
+            claves=Object.keys(datos)
+            
+            for(i=0;i<claves.length;i++){
+                // ["nombre", "apellido", ...]
+                id=claves[i];
+                valor = datos[id]
+                if(existeInput(id)){
+                    $("input[id=" + id + "]").val(valor);
+                }
+                else{
+                    alert('error no existe Input: '+id)
+                }
+            }
+            
+        }
+        function existeInput(id){
+            return $("input[id=" + id + "]").length > 0;
+            
+        }
+        // hacer una funcion que recibe como parametro un objeto y pone los 
+        // valores del objeto en los inputs de la pagina
+
+        // agregar un boton que llama a la funcion y le pone tus datos
+
+
+        function limpiarCampos() {
+            event.preventDefault();
+            $("input").val(null);
+            $("select").val(null);
+            $("textarea").val(null);
+            $("input:checkbox").prop("checked", false);
+
+            //$("input:text").val("apellido");
+            //$("input:number").val("dni");
+            //$("input:text").val("dirección");
+        }
+        $(document).ready(function () {
+            //Aceptar tiene que mostrar todos los datos en la console
+            //$("button").eq(0).click(loguearCampos);
+            $("button").eq(0).click(loguearObjetoCampos2);
+            //Cancelar
+            $("button").eq(1).click(limpiarCampos);
+           traerDatosDelServidor();
+        });
+    </script>
+</head>
+
+<body>
+    <form action="post.php" method="POST">
+        <br> Nombre: <input type="text" name="nombre" id="nombre">
+        <br>
+        <br> Apellido: <input type="text" name="apellido" id="apellido">
+        <br>
+        <br> DNI: <input type="number" name="dni" id="dni">
+        <br>
+        <br> Dirección: <input type="text" id="direccion">
+        <br>
+        <br> Fecha: <input type="date" id="fecha">
+        <br>
+        <br> Sexo:
+        <select id="sexo">
+            <option value="Masculino">M</option> 
+            <option value="Femenino">F</option>
+        </select>
+        <br>
+        <br> Descripcion:
+        <textarea id="descripcion" cols="30" rows="10"></textarea>
+        <br>
+        <br> Acepto bla bla bla<input type="checkbox" name="checkbox" id="checkbox">
+        <br>
+        <br>
+        <button>
+        Aceptar 
+        </button>
+        <button>
+        Cancelar 
+        </button>
+
+        <br>
+        <br>
+
+        <div id="formulariomayores" style="display: none;">
+            <!--Dato para mayores de edad: <input type="text" name="mayores_edad">-->
+        </div>
+    </form>
+</body>
+
+</html>
